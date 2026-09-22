@@ -1,0 +1,19 @@
+name: module-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing signed semantic-version tag to verify and publish.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    uses: hatan4ik/terraform-pipelines/.github/workflows/module-release.yml@838da070a7e33ed2911ad3768ba3d00cccc9a5d9 # v0.1.0
+    with:
+      release_tag: ${{ inputs.release_tag }}
+      module_directory: .
