@@ -84,10 +84,11 @@ variable "tags" {
 variable "applications" {
   description = "Map of immutable-image private Fargate services. An empty map creates no workload resources."
   type = map(object({
-    image_digest  = string
-    cpu           = number
-    memory        = number
-    desired_count = number
+    image_digest         = string
+    cpu                  = number
+    memory               = number
+    desired_count        = number
+    force_new_deployment = optional(bool, false)
     autoscaling = object({
       min_capacity       = number
       max_capacity       = number
