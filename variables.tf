@@ -181,4 +181,15 @@ variable "applications" {
     )]))
     error_message = "Secret ARNs must be ARNs and Cognito callback/logout URLs must use HTTPS."
   }
+
+  validation {
+    condition = alltrue([
+      for application in values(var.applications) :
+      application.cognito == null || (
+        !contains(keys(application.environment), "COGNITO_USER_POOL_ID") &&
+        !contains(keys(application.environment), "COGNITO_CLIENT_ID")
+      )
+    ])
+    error_message = "COGNITO_USER_POOL_ID and COGNITO_CLIENT_ID are injected by the module when Cognito client settings are declared."
+  }
 }

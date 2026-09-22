@@ -28,6 +28,16 @@ locals {
     if application.cognito != null
   }
 
+  application_environment = {
+    for key, application in var.applications : key => merge(
+      application.environment,
+      application.cognito == null ? {} : {
+        COGNITO_USER_POOL_ID = var.cognito_user_pool_id
+        COGNITO_CLIENT_ID    = aws_cognito_user_pool_client.application[key].id
+      },
+    )
+  }
+
   execution_policy_documents = {
     for key, application in var.applications : key => {
       Version = "2012-10-17"

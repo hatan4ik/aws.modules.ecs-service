@@ -169,7 +169,7 @@ resource "aws_ecs_task_definition" "application" {
         image                  = each.value.image_digest
         essential              = true
         readonlyRootFilesystem = each.value.readonly_root_filesystem
-        environment            = [for name, value in each.value.environment : { name = name, value = value }]
+        environment            = [for name in sort(keys(local.application_environment[each.key])) : { name = name, value = local.application_environment[each.key][name] }]
         secrets                = [for name, value_from in each.value.secret_arns : { name = name, valueFrom = value_from }]
         logConfiguration = {
           logDriver = "awslogs"
