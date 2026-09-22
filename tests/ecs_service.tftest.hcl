@@ -58,4 +58,9 @@ run "private_fargate_service_plan" {
     error_message = "Fargate tasks must remain private."
   }
 
+  assert {
+    condition     = local.application_environment["api"]["COGNITO_USER_POOL_ID"] == "us-east-2_example"
+    error_message = "Cognito-backed applications must receive the declared user-pool ID without repeating it in each environment map."
+  }
+
 }
