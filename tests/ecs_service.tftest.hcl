@@ -10,6 +10,12 @@ mock_provider "aws" {
       region = "us-east-2"
     }
   }
+
+  mock_data "aws_prefix_list" {
+    defaults = {
+      id = "pl-4ca54025"
+    }
+  }
 }
 
 run "private_fargate_service_plan" {
@@ -62,6 +68,11 @@ run "private_fargate_service_plan" {
   assert {
     condition     = aws_ecs_service.application["api"].force_new_deployment == true
     error_message = "Callers must be able to request a Terraform-managed fresh ECS deployment after a private networking prerequisite changes."
+  }
+
+  assert {
+    condition     = aws_vpc_security_group_egress_rule.application_https_to_s3["api"].prefix_list_id == "pl-4ca54025"
+    error_message = "Private Fargate tasks must reach ECR image layers through the regional S3 gateway prefix list."
   }
 
   assert {

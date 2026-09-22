@@ -11,7 +11,8 @@ CPU target tracking.
 - Tasks never receive a public IP.
 - A task security group has no ingress unless the caller explicitly supplies
   approved source security groups and a container port.
-- Default egress is TLS to the supplied VPC CIDR only, for private endpoints.
+- Default egress is TLS to the supplied VPC CIDR for private endpoints and to
+  the regional S3 managed prefix list for ECR image layers.
 - Task egress is created before the ECS service can launch; callers can request
   one Terraform-managed fresh deployment with `force_new_deployment`.
 - Images must end in a SHA-256 digest; mutable tags are rejected.
@@ -84,10 +85,12 @@ No modules.
 | [aws_iam_role_policy.task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_security_group.application](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_vpc_security_group_egress_rule.application_https_to_s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_egress_rule.application_https_to_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.application](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [terraform_data.application_contract](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
+| [aws_prefix_list.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/prefix_list) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
