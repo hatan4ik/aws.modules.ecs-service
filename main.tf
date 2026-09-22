@@ -60,6 +60,21 @@ resource "aws_vpc_security_group_egress_rule" "application_https_to_vpc" {
   to_port           = 443
 }
 
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${data.aws_region.current.region}.s3"
+}
+
+resource "aws_vpc_security_group_egress_rule" "application_https_to_s3" {
+  for_each = var.applications
+
+  security_group_id = aws_security_group.application[each.key].id
+  description       = "TLS to the regional S3 gateway endpoint for ECR image layers"
+  prefix_list_id    = data.aws_prefix_list.s3.id
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
 resource "aws_vpc_security_group_ingress_rule" "application" {
   for_each = local.ingress_rules
 
@@ -246,6 +261,7 @@ resource "aws_ecs_service" "application" {
   }
 
   depends_on = [
+    aws_vpc_security_group_egress_rule.application_https_to_s3,
     aws_vpc_security_group_egress_rule.application_https_to_vpc,
     aws_iam_role_policy_attachment.execution,
     terraform_data.application_contract,
