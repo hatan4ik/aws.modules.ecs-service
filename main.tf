@@ -221,6 +221,7 @@ resource "aws_ecs_service" "application" {
   platform_version        = "LATEST"
   enable_execute_command  = each.value.enable_execute_command
   enable_ecs_managed_tags = true
+  force_new_deployment    = each.value.force_new_deployment
   propagate_tags          = "SERVICE"
   wait_for_steady_state   = false
 
@@ -245,6 +246,7 @@ resource "aws_ecs_service" "application" {
   }
 
   depends_on = [
+    aws_vpc_security_group_egress_rule.application_https_to_vpc,
     aws_iam_role_policy_attachment.execution,
     terraform_data.application_contract,
   ]

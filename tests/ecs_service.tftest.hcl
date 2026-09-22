@@ -32,10 +32,11 @@ run "private_fargate_service_plan" {
     }
     applications = {
       api = {
-        image_digest  = "123456789012.dkr.ecr.us-east-2.amazonaws.com/sandbox-platform-dev-application@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        cpu           = 256
-        memory        = 512
-        desired_count = 1
+        image_digest         = "123456789012.dkr.ecr.us-east-2.amazonaws.com/sandbox-platform-dev-application@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        cpu                  = 256
+        memory               = 512
+        desired_count        = 1
+        force_new_deployment = true
         autoscaling = {
           min_capacity       = 1
           max_capacity       = 2
@@ -56,6 +57,11 @@ run "private_fargate_service_plan" {
   assert {
     condition     = aws_ecs_service.application["api"].network_configuration[0].assign_public_ip == false
     error_message = "Fargate tasks must remain private."
+  }
+
+  assert {
+    condition     = aws_ecs_service.application["api"].force_new_deployment == true
+    error_message = "Callers must be able to request a Terraform-managed fresh ECS deployment after a private networking prerequisite changes."
   }
 
   assert {
