@@ -76,6 +76,11 @@ run "private_fargate_service_plan" {
   }
 
   assert {
+    condition     = aws_vpc_security_group_egress_rule.application_https_to_vpc["api"].cidr_ipv4 == "10.64.0.0/16" && aws_vpc_security_group_egress_rule.application_https_to_vpc["api"].from_port == 443 && aws_vpc_security_group_egress_rule.application_https_to_vpc["api"].to_port == 443
+    error_message = "Private Fargate tasks must have only the declared TLS path to VPC-private destinations."
+  }
+
+  assert {
     condition     = local.application_environment["api"]["COGNITO_USER_POOL_ID"] == "us-east-2_example"
     error_message = "Cognito-backed applications must receive the declared user-pool ID without repeating it in each environment map."
   }
