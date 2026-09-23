@@ -1,4 +1,29 @@
+# Terraform working directories, state, and crash dumps
 .terraform/
 *.tfstate
 *.tfstate.*
 crash.log
+crash.*.log
+
+# Variable files are never shipped with this module
+*.tfvars
+*.tfvars.json
+
+# Local overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration
+.terraformrc
+terraform.rc
+
+# Provider lock files are committed only at the repository root
+**/.terraform.lock.hcl
+!/.terraform.lock.hcl
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/

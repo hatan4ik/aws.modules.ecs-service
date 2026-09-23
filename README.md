@@ -170,7 +170,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.66.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Modules
 
