@@ -23,11 +23,14 @@ terraform.rc
 **/.terraform.lock.hcl
 !/.terraform.lock.hcl
 
-# Scanner output. The CI Checkov step writes results.sarif and the Trivy action
-# writes trivy_envs.txt into the workspace root, and the docs drift check stages
-# the working directory before counting changes; an ignored file is never staged.
+# Scanner artifacts. The CI Checkov action writes results.sarif and its problem
+# matchers, and the Trivy action writes .cache/ and trivy_envs.txt, into the
+# workspace root. The docs drift check stages the working directory before
+# counting changes, and an ignored file is never staged.
 *.sarif
+checkov-problem-matcher*.json
 trivy_envs.txt
+.cache/
 
 # Editors and OS
 .DS_Store
