@@ -53,6 +53,23 @@ injects the resulting `COGNITO_USER_POOL_ID` and `COGNITO_CLIENT_ID` into the
 task definition. Callers cannot override those values in the application
 environment map, so a service validates tokens for the client Terraform created.
 
+## Release
+
+The `module-release` workflow publishes immutable GitHub releases only from a
+GitHub-verified, signed, annotated semantic-version tag that points to the
+merged `main` revision. Lightweight or unsigned tags are rejected before any
+release is published. Configure a GitHub-associated GPG or SSH signing key on
+the release operator's workstation, then create and push the signed tag before
+dispatching the workflow:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -s vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+gh workflow run module-release.yml --ref main -f release_tag=vX.Y.Z
+```
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

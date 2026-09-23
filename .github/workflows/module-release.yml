@@ -9,7 +9,9 @@ on:
         type: string
 
 permissions:
-  contents: read
+  # The reusable workflow creates the immutable GitHub release after it has
+  # validated the caller-supplied, GitHub-verified annotated tag.
+  contents: write
 
 jobs:
   release:
