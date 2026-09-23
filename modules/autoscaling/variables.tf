@@ -33,7 +33,7 @@ variable "max_capacity" {
 }
 
 variable "policies" {
-  description = "Scaling policies keyed by a short name. Target tracking uses one predefined ECS/ALB metric or one customized CloudWatch metric; step scaling needs a caller-managed CloudWatch alarm that targets the policy ARN."
+  description = "Scaling policies keyed by a short name. Defaults (also when null) to CPU target tracking at 60 percent; pass {} for a target with no policies. Target tracking uses one predefined ECS/ALB metric or one customized CloudWatch metric; step scaling needs a caller-managed CloudWatch alarm that targets the policy ARN."
   type = map(object({
     policy_type = optional(string, "TargetTrackingScaling")
     target_tracking = optional(object({
@@ -63,7 +63,9 @@ variable "policies" {
       }))
     }))
   }))
-  default  = {}
+  default = {
+    cpu = { target_tracking = { predefined_metric_type = "ECSServiceAverageCPUUtilization", target_value = 60 } }
+  }
   nullable = false
 
   validation {

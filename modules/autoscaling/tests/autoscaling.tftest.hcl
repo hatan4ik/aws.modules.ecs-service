@@ -57,6 +57,32 @@ run "registers_target_with_predefined_target_tracking" {
   }
 }
 
+run "defaults_to_cpu_target_tracking_when_policies_is_null" {
+  command = plan
+
+  variables {
+    policies = null
+  }
+
+  assert {
+    condition     = length(aws_appautoscaling_policy.this) == 1 && aws_appautoscaling_policy.this["cpu"].target_tracking_scaling_policy_configuration[0].target_value == 60 && aws_appautoscaling_policy.this["cpu"].target_tracking_scaling_policy_configuration[0].predefined_metric_specification[0].predefined_metric_type == "ECSServiceAverageCPUUtilization"
+    error_message = "A null policies value must fall back to CPU target tracking at 60 percent."
+  }
+}
+
+run "creates_no_policies_for_an_empty_map" {
+  command = plan
+
+  variables {
+    policies = {}
+  }
+
+  assert {
+    condition     = length(aws_appautoscaling_policy.this) == 0
+    error_message = "An explicit empty policies map must create a target without policies."
+  }
+}
+
 run "renders_customized_metric_and_step_scaling" {
   command = plan
 
