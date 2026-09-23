@@ -7,8 +7,12 @@ EXAMPLE_DIRS  := $(sort $(patsubst %/,%,$(dir $(wildcard examples/*/*.tf))))
 ALL_DIRS      := $(ROOT_DIRS) $(EXAMPLE_DIRS)
 TFLINT_CONFIG := $(CURDIR)/.tflint.hcl
 TFDOCS_CONFIG := $(CURDIR)/.terraform-docs.yml
+# Must match the terraform-docs bundled by the CI action (terraform-docs/gh-actions
+# v1.4.1 ships 0.20.0); newer versions change table formatting and fail the
+# docs drift check in CI.
+TFDOCS_VERSION := v0.20.0
 
-.PHONY: check fmt fmt-fix init validate lint test variants docs docs-check security clean
+.PHONY: check fmt fmt-fix init validate lint test variants docs-version docs docs-check security clean
 
 check: fmt validate lint test variants docs-check security
 
@@ -50,13 +54,17 @@ variants:
 	@echo "==> variants service.tf"
 	@scripts/check-service-variants.sh service.tf
 
-docs:
+docs-version:
+	@terraform-docs --version | grep -q "$(TFDOCS_VERSION)" || { \
+	  echo "error: terraform-docs $(TFDOCS_VERSION) is required (found: $$(terraform-docs --version)); CI generates docs with that version" >&2; exit 1; }
+
+docs: docs-version
 	@for dir in $(ALL_DIRS); do \
 	  echo "==> docs $$dir"; \
 	  terraform-docs -c "$(TFDOCS_CONFIG)" "$$dir" || exit 1; \
 	done
 
-docs-check:
+docs-check: docs-version
 	@for dir in $(ALL_DIRS); do \
 	  echo "==> docs-check $$dir"; \
 	  terraform-docs -c "$(TFDOCS_CONFIG)" --output-check "$$dir" || exit 1; \

@@ -45,14 +45,14 @@ module "iam" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Modules
@@ -62,7 +62,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [aws_iam_role.task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.task_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.task_declared](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -76,7 +76,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_cluster_arn"></a> [cluster\_arn](#input\_cluster\_arn) | ARN of the ECS cluster the tasks run in. Provides the partition, region, and account used in trust-policy conditions and managed-policy ARNs. | `string` | n/a | yes |
 | <a name="input_create_task_execution_role"></a> [create\_task\_execution\_role](#input\_create\_task\_execution\_role) | Create the task execution role. Set false and supply task\_execution\_role\_arn to use an existing role; the module never modifies a supplied role. | `bool` | `true` | no |
 | <a name="input_create_task_role"></a> [create\_task\_role](#input\_create\_task\_role) | Create the task role. Set false and supply task\_role\_arn to use an existing role; the module never modifies a supplied role. | `bool` | `true` | no |
@@ -103,7 +103,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_task_execution_role_arn"></a> [task\_execution\_role\_arn](#output\_task\_execution\_role\_arn) | ARN of the task execution role, created or supplied. |
 | <a name="output_task_execution_role_derived_policy"></a> [task\_execution\_role\_derived\_policy](#output\_task\_execution\_role\_derived\_policy) | JSON policy the module derived from secret, parameter, and KMS references, or null. Attach it yourself when supplying your own execution role. |
 | <a name="output_task_execution_role_name"></a> [task\_execution\_role\_name](#output\_task\_execution\_role\_name) | Name of the task execution role, created or parsed from the supplied ARN. |

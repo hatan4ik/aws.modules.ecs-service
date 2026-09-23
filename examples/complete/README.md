@@ -51,7 +51,7 @@ Any input not set in `terraform.tfvars` can be passed with `-var` as above.
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.35.0, < 7.0.0 |
 
@@ -62,7 +62,7 @@ No providers.
 ## Modules
 
 | Name | Source | Version |
-| ---- | ------ | ------- |
+|------|--------|---------|
 | <a name="module_service"></a> [service](#module\_service) | ../../ | n/a |
 
 ## Resources
@@ -72,7 +72,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_api_token_parameter_arn"></a> [api\_token\_parameter\_arn](#input\_api\_token\_parameter\_arn) | SSM Parameter Store parameter ARN injected as API\_TOKEN. | `string` | n/a | yes |
 | <a name="input_assets_bucket_arn"></a> [assets\_bucket\_arn](#input\_assets\_bucket\_arn) | S3 bucket ARN whose objects the task role may read. | `string` | n/a | yes |
 | <a name="input_cluster_arn"></a> [cluster\_arn](#input\_cluster\_arn) | ARN of the existing ECS cluster that runs the service. | `string` | n/a | yes |
@@ -97,7 +97,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_autoscaling_policy_arns"></a> [autoscaling\_policy\_arns](#output\_autoscaling\_policy\_arns) | Scaling policy ARNs keyed by policy key (cpu, memory). |
 | <a name="output_autoscaling_scheduled_action_arns"></a> [autoscaling\_scheduled\_action\_arns](#output\_autoscaling\_scheduled\_action\_arns) | Scheduled action ARNs keyed by action key. |
 | <a name="output_autoscaling_target_resource_id"></a> [autoscaling\_target\_resource\_id](#output\_autoscaling\_target\_resource\_id) | Application Auto Scaling resource ID of the service. |

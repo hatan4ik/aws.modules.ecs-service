@@ -53,7 +53,7 @@ resource "aws_ecs_task_definition" "this" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 
 ## Providers
@@ -71,7 +71,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_command"></a> [command](#input\_command) | Command passed to the container, overriding the image CMD. | `list(string)` | `null` | no |
 | <a name="input_container_dependencies"></a> [container\_dependencies](#input\_container\_dependencies) | Start-order dependencies on other containers in the task. | <pre>list(object({<br/>    container_name = string<br/>    condition      = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU units reserved for this container. Optional on Fargate; the task-level cpu is the hard limit. | `number` | `null` | no |
@@ -109,7 +109,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_container_definition"></a> [container\_definition](#output\_container\_definition) | Rendered ECS container definition (camelCase keys, nulls stripped) ready for jsonencode into a task definition. |
 | <a name="output_secret_arns"></a> [secret\_arns](#output\_secret\_arns) | Sorted, de-duplicated ARNs referenced by secrets and log secret options; used to derive execution-role permissions. |
 <!-- END_TF_DOCS -->

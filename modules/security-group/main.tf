@@ -4,6 +4,7 @@
 # touching the others.
 
 resource "aws_security_group" "this" {
+  # checkov:skip=CKV2_AWS_5: The group is attached to the ECS service's network configuration by the root module (or by the caller when used standalone); Checkov's graph cannot follow module outputs to that attachment.
   count = var.create ? 1 : 0
 
   name        = var.name

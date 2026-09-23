@@ -53,7 +53,7 @@ terraform init && terraform plan -var cluster_arn=arn:aws:ecs:us-east-1:12345678
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.35.0, < 7.0.0 |
 
@@ -64,7 +64,7 @@ No providers.
 ## Modules
 
 | Name | Source | Version |
-| ---- | ------ | ------- |
+|------|--------|---------|
 | <a name="module_service"></a> [service](#module\_service) | ../../ | n/a |
 
 ## Resources
@@ -74,7 +74,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_cluster_arn"></a> [cluster\_arn](#input\_cluster\_arn) | ARN of the existing ECS cluster shared by every service. | `string` | n/a | yes |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix for every service name; the service key is appended (<prefix>-<key>). | `string` | `"platform"` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region of the cluster and the VPC. | `string` | `"us-east-1"` | no |
@@ -87,7 +87,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_security_group_ids"></a> [security\_group\_ids](#output\_security\_group\_ids) | Task security group IDs keyed by service key. |
 | <a name="output_service_arns"></a> [service\_arns](#output\_service\_arns) | ECS service ARNs keyed by service key. |
 | <a name="output_task_definition_arns"></a> [task\_definition\_arns](#output\_task\_definition\_arns) | Task definition ARNs keyed by service key. |

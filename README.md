@@ -162,20 +162,20 @@ Apache-2.0. See [LICENSE](LICENSE).
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
-| ---- | ------ | ------- |
+|------|--------|---------|
 | <a name="module_autoscaling"></a> [autoscaling](#module\_autoscaling) | ./modules/autoscaling | n/a |
 | <a name="module_container_definition"></a> [container\_definition](#module\_container\_definition) | ./modules/container-definition | n/a |
 | <a name="module_iam"></a> [iam](#module\_iam) | ./modules/iam | n/a |
@@ -184,7 +184,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [aws_cloudwatch_log_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_ecs_service.ignore_task_definition](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service) | resource |
 | [aws_ecs_service.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service) | resource |
@@ -193,7 +193,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_alarms"></a> [alarms](#input\_alarms) | CloudWatch alarms that fail (and by default roll back) a deployment. | <pre>object({<br/>    alarm_names = set(string)<br/>    enable      = optional(bool, true)<br/>    rollback    = optional(bool, true)<br/>  })</pre> | `null` | no |
 | <a name="input_assign_public_ip"></a> [assign\_public\_ip](#input\_assign\_public\_ip) | Give tasks a public IP. Leave false; expose services through a load balancer instead. | `bool` | `false` | no |
 | <a name="input_autoscaling"></a> [autoscaling](#input\_autoscaling) | Application Auto Scaling for the service. Null disables it. Omitting policies applies CPU target tracking at 60 percent. See modules/autoscaling for policy and schedule shapes. | <pre>object({<br/>    min_capacity = number<br/>    max_capacity = number<br/>    policies = optional(map(object({<br/>      policy_type = optional(string, "TargetTrackingScaling")<br/>      target_tracking = optional(object({<br/>        predefined_metric_type = optional(string)<br/>        resource_label         = optional(string)<br/>        customized_metric = optional(object({<br/>          metric_name = string<br/>          namespace   = string<br/>          statistic   = string<br/>          unit        = optional(string)<br/>          dimensions  = optional(map(string), {})<br/>        }))<br/>        target_value       = number<br/>        scale_in_cooldown  = optional(number, 300)<br/>        scale_out_cooldown = optional(number, 60)<br/>        disable_scale_in   = optional(bool, false)<br/>      }))<br/>      step_scaling = optional(object({<br/>        adjustment_type          = optional(string, "ChangeInCapacity")<br/>        cooldown                 = optional(number, 60)<br/>        metric_aggregation_type  = optional(string, "Average")<br/>        min_adjustment_magnitude = optional(number)<br/>        step_adjustments = list(object({<br/>          scaling_adjustment          = number<br/>          metric_interval_lower_bound = optional(number)<br/>          metric_interval_upper_bound = optional(number)<br/>        }))<br/>      }))<br/>    })))<br/>    scheduled_actions = optional(map(object({<br/>      schedule     = string<br/>      timezone     = optional(string)<br/>      min_capacity = optional(number)<br/>      max_capacity = optional(number)<br/>      start_time   = optional(string)<br/>      end_time     = optional(string)<br/>    })), {})<br/>  })</pre> | `null` | no |
@@ -270,7 +270,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | ECS service ARN. |
 | <a name="output_autoscaling_policy_arns"></a> [autoscaling\_policy\_arns](#output\_autoscaling\_policy\_arns) | Scaling policy ARNs keyed by policy key; empty when autoscaling is disabled. |
 | <a name="output_autoscaling_scheduled_action_arns"></a> [autoscaling\_scheduled\_action\_arns](#output\_autoscaling\_scheduled\_action\_arns) | Scheduled action ARNs keyed by action key; empty when autoscaling is disabled. |

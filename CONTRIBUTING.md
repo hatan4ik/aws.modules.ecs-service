@@ -10,7 +10,7 @@ The module targets Terraform `>= 1.7.0, < 2.0.0` and is developed against 1.7.5,
 | --- | --- | --- |
 | [tfenv](https://github.com/tfutils/tfenv) | Pin the Terraform version | `tfenv install 1.7.5 && tfenv use 1.7.5` |
 | [tflint](https://github.com/terraform-linters/tflint) | Lint with the Terraform and AWS rulesets configured in `.tflint.hcl` | `brew install tflint && tflint --init` |
-| [terraform-docs](https://terraform-docs.io) v0.24 | Generate the inputs and outputs tables in every README | `brew install terraform-docs` |
+| [terraform-docs](https://terraform-docs.io) v0.20.0 | Generate the inputs and outputs tables in every README. Pinned to the version bundled by the CI docs action; newer releases change table formatting and fail the drift check (`make docs` refuses other versions). | Download the v0.20.0 binary from the [releases page](https://github.com/terraform-docs/terraform-docs/releases/tag/v0.20.0) |
 | [checkov](https://www.checkov.io) | Static security policy | `pip install checkov` |
 | [trivy](https://trivy.dev) | Misconfiguration scanning | `brew install trivy` |
 | [pre-commit](https://pre-commit.com) | Run the gate on every commit | `pip install pre-commit && pre-commit install` |
