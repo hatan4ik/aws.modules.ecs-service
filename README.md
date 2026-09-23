@@ -13,6 +13,9 @@ CPU target tracking.
   approved source security groups and a container port.
 - Default egress is TLS to the supplied VPC CIDR for private endpoints and to
   the regional S3 managed prefix list for ECR image layers.
+- Every task security-group rule is an individual `aws_vpc_security_group_*_rule`
+  resource. The module intentionally has no inline `ingress` or `egress` blocks,
+  preventing rule ownership conflicts and perpetual Terraform diffs.
 - Task egress is created before the ECS service can launch; callers can request
   one Terraform-managed fresh deployment with `force_new_deployment`.
 - Images must end in a SHA-256 digest; mutable tags are rejected.

@@ -41,7 +41,6 @@ resource "aws_security_group" "application" {
   name        = "${local.application_names[each.key]}-tasks"
   description = "Private Fargate task security group for ${each.key}."
   vpc_id      = var.vpc_id
-  egress      = []
 
   tags = merge(local.common_tags, each.value.tags, {
     Name        = "${local.application_names[each.key]}-tasks"
