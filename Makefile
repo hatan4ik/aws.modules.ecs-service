@@ -12,7 +12,7 @@ TFDOCS_CONFIG := $(CURDIR)/.terraform-docs.yml
 # docs drift check in CI.
 TFDOCS_VERSION := v0.20.0
 
-.PHONY: check fmt fmt-fix init validate lint test variants docs-version docs docs-check security clean
+.PHONY: check fmt fmt-fix init validate lint test variants docs-version docs docs-check security lock clean
 
 check: fmt validate lint test variants docs-check security
 
@@ -79,6 +79,13 @@ security:
 	else \
 	  echo "==> security trivy . (skipped: trivy not on PATH)"; \
 	fi
+
+# The root lock file is committed. It must carry hashes for every platform CI
+# and contributors use, otherwise `terraform init` rewrites it and the docs
+# drift check fails on the modified tree.
+lock:
+	@echo "==> lock ."
+	@terraform providers lock -platform=linux_amd64 -platform=linux_arm64 -platform=darwin_amd64 -platform=darwin_arm64
 
 clean:
 	@echo "==> clean ."
