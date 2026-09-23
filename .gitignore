@@ -23,6 +23,11 @@ terraform.rc
 **/.terraform.lock.hcl
 !/.terraform.lock.hcl
 
+# Scanner output. The CI Checkov step writes results.sarif into the workspace
+# root, and the docs drift check stages the working directory before counting
+# changes; an ignored file is never staged.
+*.sarif
+
 # Editors and OS
 .DS_Store
 .idea/
