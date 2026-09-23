@@ -148,6 +148,16 @@ module "app_container" {
 }
 ```
 
+The `module-release` workflow publishes an immutable GitHub release only from a GitHub-verified, signed, annotated semantic-version tag that points at the merged `main` revision; lightweight or unsigned tags are rejected before anything is published. With a GitHub-associated GPG or SSH signing key configured:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -s vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+gh workflow run module-release.yml --ref main -f release_tag=vX.Y.Z
+```
+
 Upgrading from 0.1.x: read [docs/UPGRADE-1.0.md](docs/UPGRADE-1.0.md) for the input mapping, the settings that preserve existing resources, and ready-to-paste `moved` blocks. All changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
