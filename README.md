@@ -116,6 +116,13 @@ Not created here
 - `force_new_deployment = true` forces a new deployment on every apply, for example after a networking prerequisite changed. It defaults to false.
 - Task definitions are immutable. Every content change registers a new revision and the service rolls to it under the circuit breaker. `skip_destroy` keeps old revisions active; `track_latest` follows revisions registered outside Terraform.
 
+## Testing
+
+Two layers, deliberately separate:
+
+- **Contract tests** (`tests/`, run by `make test` and by CI) use `mock_provider`: no credentials, nothing created, placeholder identifiers such as the AWS documentation account `123456789012`. They pin the module's interface, validations, rendered JSON, and defaults, and run identically for everyone.
+- **Integration suites** (`tests/integration/`, run by `make integration-smoke` and `make integration-e2e`, or the dispatch-only `integration` workflow) apply the module for real in **your** account with **your** credentials and region from the environment, against disposable fixtures the suite creates and destroys itself. `smoke` proves every resource is accepted by the AWS APIs without starting a task; `e2e` runs one task to steady state. See [tests/integration/README.md](tests/integration/README.md) for permissions and the GitHub environment contract.
+
 ## Design principles
 
 - Single responsibility. Each submodule has one reason to change: the container JSON schema, the IAM role and policy shape, the security-group rule shape, the scaling policy shape. The root owns only the task definition, the service, and the log group.
@@ -151,12 +158,13 @@ module "app_container" {
 The `module-release` workflow publishes an immutable GitHub release only from a GitHub-verified, signed, annotated semantic-version tag that points at the merged `main` revision; lightweight or unsigned tags are rejected before anything is published. With a GitHub-associated GPG or SSH signing key configured:
 
 ```bash
-git switch main
-git pull --ff-only
-git tag -s vX.Y.Z -m "vX.Y.Z"
+git fetch origin
+git tag -s vX.Y.Z <commit> -m "vX.Y.Z"
 git push origin vX.Y.Z
-gh workflow run module-release.yml --ref main -f release_tag=vX.Y.Z
+gh workflow run module-release.yml --ref vX.Y.Z -f release_tag=vX.Y.Z
 ```
+
+Dispatch from the tag, never from `main`: the workflow verifies that the tag points at the revision it checked out, and a maintenance release for an older line (for example a 0.1.x fix after 1.0.0 landed on `main`) is cut from that line's commit.
 
 Upgrading from 0.1.x: read [docs/UPGRADE-1.0.md](docs/UPGRADE-1.0.md) for the input mapping, the settings that preserve existing resources, and ready-to-paste `moved` blocks. All changes are listed in [CHANGELOG.md](CHANGELOG.md).
 

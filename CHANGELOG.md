@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Credential-driven integration suites in `tests/integration/` (`smoke` and `e2e`) with a disposable fixture module, `make integration-smoke` and `make integration-e2e` targets, a dispatch-only `integration` workflow that assumes a role through GitHub OIDC from the protected `integration` environment, and the IAM trust and permissions documents the role needs.
+
 ## [1.0.0] - 2026-09-23
 
 Breaking release. One module call now provisions one service. [docs/UPGRADE-1.0.md](docs/UPGRADE-1.0.md) maps every 0.1.x input to its replacement, lists the settings that preserve existing resources, and gives ready-to-paste `moved` blocks.
