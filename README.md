@@ -74,14 +74,14 @@ gh workflow run module-release.yml --ref main -f release_tag=vX.Y.Z
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.35.0, < 7.0.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.66.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
@@ -92,7 +92,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [aws_appautoscaling_policy.application_cpu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_policy) | resource |
 | [aws_appautoscaling_target.application](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_target) | resource |
 | [aws_cloudwatch_log_group.application](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
@@ -116,7 +116,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_application_data_kms_key_arn"></a> [application\_data\_kms\_key\_arn](#input\_application\_data\_kms\_key\_arn) | KMS key used by application log groups and optionally granted to task execution roles for encrypted secrets. | `string` | n/a | yes |
 | <a name="input_applications"></a> [applications](#input\_applications) | Map of immutable-image private Fargate services. An empty map creates no workload resources. | <pre>map(object({<br/>    image_digest         = string<br/>    cpu                  = number<br/>    memory               = number<br/>    desired_count        = number<br/>    force_new_deployment = optional(bool, false)<br/>    autoscaling = object({<br/>      min_capacity       = number<br/>      max_capacity       = number<br/>      cpu_target_percent = optional(number, 60)<br/>    })<br/>    container_port              = optional(number)<br/>    command                     = optional(list(string), [])<br/>    environment                 = optional(map(string), {})<br/>    secret_arns                 = optional(map(string), {})<br/>    secret_kms_key_arns         = optional(set(string), [])<br/>    task_policy_statements      = optional(map(object({ actions = set(string), resources = set(string) })), {})<br/>    enable_session_table_access = optional(bool, false)<br/>    ingress_security_group_ids  = optional(set(string), [])<br/>    enable_execute_command      = optional(bool, false)<br/>    readonly_root_filesystem    = optional(bool, true)<br/>    ephemeral_storage_gib       = optional(number)<br/>    cpu_architecture            = optional(string, "X86_64")<br/>    health_check = optional(object({<br/>      command      = list(string)<br/>      interval     = number<br/>      timeout      = number<br/>      retries      = number<br/>      start_period = number<br/>    }))<br/>    cognito = optional(object({<br/>      callback_urls                = set(string)<br/>      logout_urls                  = set(string)<br/>      allowed_oauth_scopes         = set(string)<br/>      supported_identity_providers = optional(set(string), ["COGNITO"])<br/>    }))<br/>    tags = optional(map(string), {})<br/>  }))</pre> | `{}` | no |
 | <a name="input_cluster_arn"></a> [cluster\_arn](#input\_cluster\_arn) | ARN of the existing ECS cluster that hosts the private Fargate services. | `string` | n/a | yes |
@@ -133,6 +133,6 @@ No modules.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_services"></a> [services](#output\_services) | Non-secret private workload identifiers by application key. |
 <!-- END_TF_DOCS -->
