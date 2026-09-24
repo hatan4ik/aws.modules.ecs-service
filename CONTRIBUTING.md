@@ -22,6 +22,19 @@ terraform init -backend=false -input=false
 make check
 ```
 
+
+## Integration suites
+
+`tests/integration/` holds credential-driven suites that apply the module for real and destroy everything afterwards. They are never part of `make check` or the quality pipeline. Run them against your own account before a release that touches resource behaviour:
+
+```bash
+export AWS_PROFILE=<profile> AWS_REGION=<region>
+make integration-smoke   # about 3 minutes, no task runs
+make integration-e2e     # about 8 minutes, one Fargate task reaches steady state
+```
+
+Add a suite when a feature's correctness depends on the AWS API rather than on rendering (for example a new service integration). Keep fixtures in `tests/integration/setup`, keep every value derived from the environment or the fixtures, and never reference a real account, VPC, or cluster.
+
 ## The local gate
 
 `make check` is the default target and the same gate CI runs. It stops at the first failing target and must pass before you open a pull request.

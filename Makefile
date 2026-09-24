@@ -4,7 +4,10 @@ SHELL := /bin/bash
 ROOT_DIRS     := . modules/container-definition modules/iam modules/security-group modules/autoscaling
 # Only example directories that contain Terraform, so a stray file under examples/ is ignored.
 EXAMPLE_DIRS  := $(sort $(patsubst %/,%,$(dir $(wildcard examples/*/*.tf))))
-ALL_DIRS      := $(ROOT_DIRS) $(EXAMPLE_DIRS)
+# Disposable fixtures for the credential-driven integration suites; validated
+# and linted like any module, excluded from policy scans (see .checkov.yml).
+FIXTURE_DIRS  := tests/integration/setup
+ALL_DIRS      := $(ROOT_DIRS) $(EXAMPLE_DIRS) $(FIXTURE_DIRS)
 TFLINT_CONFIG := $(CURDIR)/.tflint.hcl
 TFDOCS_CONFIG := $(CURDIR)/.terraform-docs.yml
 # Must match the terraform-docs bundled by the CI action (terraform-docs/gh-actions
@@ -12,7 +15,7 @@ TFDOCS_CONFIG := $(CURDIR)/.terraform-docs.yml
 # docs drift check in CI.
 TFDOCS_VERSION := v0.20.0
 
-.PHONY: check fmt fmt-fix init validate lint test variants docs-version docs docs-check security lock clean
+.PHONY: check fmt fmt-fix init validate lint test variants docs-version docs docs-check security lock integration-smoke integration-e2e clean
 
 check: fmt validate lint test variants docs-check security
 
@@ -79,6 +82,15 @@ security:
 	else \
 	  echo "==> security trivy . (skipped: trivy not on PATH)"; \
 	fi
+
+# Integration suites apply the module for real in the caller's own account and
+# destroy everything afterwards. Credentials and region come from the
+# environment; see tests/integration/README.md.
+integration-smoke integration-e2e: integration-%:
+	@[ -n "$$AWS_REGION$$AWS_DEFAULT_REGION" ] || { echo "error: set AWS_REGION (and credentials) for the account that will host the disposable fixtures" >&2; exit 1; }
+	@echo "==> integration $* (real apply in $${AWS_REGION:-$$AWS_DEFAULT_REGION})"
+	@terraform init -backend=false -input=false -test-directory=tests/integration >/dev/null
+	@terraform test -test-directory=tests/integration -filter="tests/integration/$*.tftest.hcl" -verbose
 
 # The root lock file is committed. It must carry hashes for every platform CI
 # and contributors use, otherwise `terraform init` rewrites it and the docs
