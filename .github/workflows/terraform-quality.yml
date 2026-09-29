@@ -22,7 +22,6 @@ jobs:
           - .
           - modules/container-definition
           - modules/iam
-          - modules/security-group
           - modules/autoscaling
           - examples/minimal
           - examples/complete

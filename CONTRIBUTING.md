@@ -71,7 +71,7 @@ Each submodule owns one concern and has one reason to change. The root only comp
 | --- | --- |
 | A container attribute (a new `containerDefinitions` field) | `modules/container-definition`: add the variable with validation, render it in `main.tf` under its camelCase key, add a test. Then expose it in the root `container_definitions` object type and pass it through in `main.tf`. |
 | IAM: a derived permission, a statement shape, trust conditions | `modules/iam`. Derived statements go in `locals.tf`; the root must not build policy JSON. |
-| Security-group rule shape or defaults | `modules/security-group`. The root passes the rule maps through untouched. |
+| Security-group rule shape or defaults | External module, [`aws.modules.security-group`](https://github.com/hatan4ik/aws.modules.security-group). The root passes the rule maps through untouched and only pins the module's ref here. |
 | Scaling policy types, metrics, schedules | `modules/autoscaling`. The root passes `var.autoscaling` fields through. |
 | Task definition arguments (volumes, runtime platform, storage) | Root `task_definition.tf` and `variables.tf`. |
 | Service arguments and integrations (load balancers, Service Connect, deployment configuration) | Root `service.tf`, applied to both service resources. |

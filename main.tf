@@ -73,7 +73,7 @@ module "iam" {
 }
 
 module "security_group" {
-  source = "./modules/security-group"
+  source = "git::https://github.com/hatan4ik/aws.modules.security-group.git?ref=a2142e9b7351c81735e4dbefdc7c66155dd4c266" # v1.1.0
 
   create        = var.create_security_group
   name          = coalesce(var.security_group_name, var.name)

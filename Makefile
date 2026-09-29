@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := check
 
-ROOT_DIRS     := . modules/container-definition modules/iam modules/security-group modules/autoscaling
+ROOT_DIRS     := . modules/container-definition modules/iam modules/autoscaling
 # Only example directories that contain Terraform, so a stray file under examples/ is ignored.
 EXAMPLE_DIRS  := $(sort $(patsubst %/,%,$(dir $(wildcard examples/*/*.tf))))
 # Disposable fixtures for the credential-driven integration suites; validated
