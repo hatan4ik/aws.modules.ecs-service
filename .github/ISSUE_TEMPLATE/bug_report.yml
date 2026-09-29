@@ -40,7 +40,6 @@ body:
         - root module
         - modules/container-definition
         - modules/iam
-        - modules/security-group
         - modules/autoscaling
         - examples
         - not sure

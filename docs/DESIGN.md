@@ -60,7 +60,7 @@ module consumes their identifiers.
 root (one service)
 ├── modules/container-definition   pure: typed inputs -> one container map
 ├── modules/iam                    task-execution role, task role, derived policies
-├── modules/security-group         task SG with declarative ingress/egress rules
+├── aws.modules.security-group      external: task SG with declarative ingress/egress rules
 ├── aws_cloudwatch_log_group.this  optional, KMS-capable
 ├── aws_ecs_task_definition.this   Fargate, awsvpc, multi-container
 ├── aws_ecs_service.this | .ignore_task_definition

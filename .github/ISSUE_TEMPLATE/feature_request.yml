@@ -33,7 +33,6 @@ body:
         - root module
         - modules/container-definition
         - modules/iam
-        - modules/security-group
         - modules/autoscaling
         - a new submodule
         - not sure

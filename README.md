@@ -51,7 +51,7 @@ This creates the task definition family `orders-api` (256 CPU units, 512 MiB, Li
 root (one service)
 ├── modules/container-definition   Pure renderer: typed inputs -> one container JSON object. No resources, no provider.
 ├── modules/iam                    Task execution role and task role, scoped trust, derived and declared inline policies.
-├── modules/security-group         Task security group with one standalone resource per ingress and egress rule.
+├── [aws.modules.security-group]   External module: task security group, one standalone resource per rule.
 ├── aws_cloudwatch_log_group.this  Optional log group, KMS-capable, injected into containers as the awslogs driver.
 ├── aws_ecs_task_definition.this   Fargate, awsvpc, multi-container, volumes, runtime platform, plan-time preconditions.
 ├── aws_ecs_service.this           The service (or .ignore_task_definition when an external deployer owns rollouts).
@@ -197,7 +197,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 | <a name="module_autoscaling"></a> [autoscaling](#module\_autoscaling) | ./modules/autoscaling | n/a |
 | <a name="module_container_definition"></a> [container\_definition](#module\_container\_definition) | ./modules/container-definition | n/a |
 | <a name="module_iam"></a> [iam](#module\_iam) | ./modules/iam | n/a |
-| <a name="module_security_group"></a> [security\_group](#module\_security\_group) | ./modules/security-group | n/a |
+| <a name="module_security_group"></a> [security\_group](#module\_security\_group) | git::https://github.com/hatan4ik/aws.modules.security-group.git | a2142e9b7351c81735e4dbefdc7c66155dd4c266 |
 
 ## Resources
 
