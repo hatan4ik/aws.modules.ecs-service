@@ -430,7 +430,7 @@ variable "deployment_controller_type" {
 }
 
 variable "deployment_configuration" {
-  description = "ECS-native deployment strategy (ROLLING, BLUE_GREEN, LINEAR, or CANARY) with bake time, traffic shifting, and lifecycle hooks. Blue/green needs load_balancers[*].advanced_configuration."
+  description = "ECS-native deployment strategy (ROLLING, BLUE_GREEN, LINEAR, or CANARY) with bake time, traffic shifting, and lifecycle hooks. canary is required with, and only allowed with, CANARY; linear likewise with LINEAR. BLUE_GREEN needs advanced_configuration on every load_balancers entry."
   type = object({
     strategy             = optional(string, "ROLLING")
     bake_time_in_minutes = optional(number)
@@ -459,6 +459,19 @@ variable "deployment_configuration" {
   validation {
     condition     = var.deployment_configuration == null ? true : contains(["ROLLING", "BLUE_GREEN", "LINEAR", "CANARY"], var.deployment_configuration.strategy)
     error_message = "deployment_configuration.strategy must be ROLLING, BLUE_GREEN, LINEAR, or CANARY."
+  }
+
+  # Each traffic-shifting block belongs to exactly one strategy. ECS rejects a
+  # CANARY or LINEAR strategy without its block at apply time, and silently
+  # ignores a block set under any other strategy; catch both at plan time.
+  validation {
+    condition     = var.deployment_configuration == null ? true : ((var.deployment_configuration.strategy == "CANARY") == (var.deployment_configuration.canary != null))
+    error_message = "deployment_configuration.canary is required when strategy is CANARY and must be null for every other strategy."
+  }
+
+  validation {
+    condition     = var.deployment_configuration == null ? true : ((var.deployment_configuration.strategy == "LINEAR") == (var.deployment_configuration.linear != null))
+    error_message = "deployment_configuration.linear is required when strategy is LINEAR and must be null for every other strategy."
   }
 }
 
@@ -615,6 +628,11 @@ variable "vpc_id" {
   description = "VPC of the managed security group. Required when create_security_group is true."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.vpc_id == null ? true : can(regex("^vpc-([0-9a-f]{8}|[0-9a-f]{17})$", var.vpc_id))
+    error_message = "vpc_id must be a VPC ID (vpc- followed by 8 or 17 lowercase hex characters)."
+  }
 }
 
 variable "security_group_name" {
@@ -688,9 +706,14 @@ variable "task_execution_role_arn" {
 }
 
 variable "task_execution_role_name" {
-  description = "Name of the created task execution role. Defaults to <name>-execution."
+  description = "Name of the created task execution role. Defaults to <name>-execution. At most 64 characters (the IAM role name limit)."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.task_execution_role_name == null ? true : (length(var.task_execution_role_name) <= 64 && can(regex("^[\\w+=,.@-]+$", var.task_execution_role_name)))
+    error_message = "task_execution_role_name must be at most 64 characters of letters, digits, or +=,.@_- ."
+  }
 }
 
 variable "task_execution_role_path" {
@@ -756,9 +779,14 @@ variable "task_role_arn" {
 }
 
 variable "task_role_name" {
-  description = "Name of the created task role. Defaults to <name>-task."
+  description = "Name of the created task role. Defaults to <name>-task. At most 64 characters (the IAM role name limit)."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.task_role_name == null ? true : (length(var.task_role_name) <= 64 && can(regex("^[\\w+=,.@-]+$", var.task_role_name)))
+    error_message = "task_role_name must be at most 64 characters of letters, digits, or +=,.@_- ."
+  }
 }
 
 variable "task_role_path" {
@@ -836,6 +864,11 @@ variable "cloudwatch_log_group_kms_key_id" {
   description = "KMS key ARN that encrypts the created log group. The key policy must allow the CloudWatch Logs service principal."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.cloudwatch_log_group_kms_key_id == null ? true : can(regex("^arn:[a-z-]+:kms:[a-z0-9-]+:[0-9]{12}:key/[A-Za-z0-9-]+$", var.cloudwatch_log_group_kms_key_id))
+    error_message = "cloudwatch_log_group_kms_key_id must be a full KMS key ARN (arn:<partition>:kms:<region>:<account>:key/<key-id>); CloudWatch Logs does not accept key IDs or aliases."
+  }
 }
 
 variable "cloudwatch_log_group_class" {
