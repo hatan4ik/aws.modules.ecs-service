@@ -6,11 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Illegal deployment-strategy combinations are rejected at plan time instead of failing at apply (or being silently ignored): `deployment_configuration.canary` is required with, and only allowed with, `strategy = "CANARY"`; `linear` likewise with `LINEAR`; and `BLUE_GREEN` requires `advanced_configuration` on every `load_balancers` entry. This is a correctness fix, not a behaviour change: every configuration it newly rejects would have failed at apply or had its traffic-shifting block ignored.
+- `vpc_id` must be a VPC ID (`vpc-` plus 8 or 17 hex characters), `cloudwatch_log_group_kms_key_id` must be a full KMS key ARN, and `task_execution_role_name` and `task_role_name` are checked against the 64-character IAM limit at the root, so a malformed value is reported against the caller's input at plan time.
+
 ### Added
 
-- Credential-driven integration suites in `tests/integration/` (`smoke` and `e2e`) with a disposable fixture module, `make integration-smoke` and `make integration-e2e` targets, a dispatch-only `integration` workflow that assumes a role through GitHub OIDC from the protected `integration` environment, and the IAM trust and permissions documents the role needs.
+- CI job `service variants in sync` runs `scripts/check-service-variants.sh` on every pull request and push to `main`, so the two `aws_ecs_service` bodies in `service.tf` can no longer drift apart unnoticed.
+- Documentation of the digest-pinning / ECR lifecycle-policy interaction (a count-based expiry can delete a digest a running revision pins, breaking replacement tasks and rollback) and of the services-per-cluster and tasks-per-service quotas.
+
+### Changed
+
+- CI uses `terraform-pipelines` v0.1.1 for the quality workflow, matching the release workflow; its `terraform-quality.yml` is unchanged from v0.1.0.
+- README, `docs/DESIGN.md`, and `docs/UPGRADE-1.0.md` no longer describe an internal `security-group` submodule as current; action version comments in the `integration` workflow match the pinned SHAs.
+
+## [1.0.1] - 2026-09-29
+
+### Changed
+
+- The task security group comes from the external [`aws.modules.security-group`](https://github.com/hatan4ik/aws.modules.security-group) module (v1.1.0, pinned by commit SHA) instead of the internal `modules/security-group` submodule, which is removed (#10). Dependency change only: the module label `security_group`, every input, every output, and every resource address are unchanged, so existing consumers see a zero-diff plan and need no `moved` blocks. Callers that sourced `//modules/security-group` from this repository directly should switch to `aws.modules.security-group`, which has the same interface.
 
 ## [1.0.0] - 2026-09-23
+
+The `v1.0.0` tag also includes the credential-driven integration suites in `tests/integration/` (`smoke` and `e2e`) with a disposable fixture module, `make integration-smoke` and `make integration-e2e` targets, a dispatch-only `integration` workflow that assumes a role through GitHub OIDC from the protected `integration` environment, and the IAM trust and permissions documents the role needs (#7). They were listed under Unreleased until now; they change no module behaviour.
 
 Breaking release. One module call now provisions one service. [docs/UPGRADE-1.0.md](docs/UPGRADE-1.0.md) maps every 0.1.x input to its replacement, lists the settings that preserve existing resources, and gives ready-to-paste `moved` blocks.
 
@@ -97,7 +116,8 @@ Breaking release. One module call now provisions one service. [docs/UPGRADE-1.0.
 
 - Variable-driven private Fargate service module. An `applications` map provisions one or more services with immutable image digests, private subnets, dedicated task and execution roles, KMS-encrypted log groups, declared secrets, optional session-table access, optional Cognito app clients, deployment circuit breaker with rollback, and CPU target tracking.
 
-[Unreleased]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v0.1.3...v1.0.0
 [0.1.3]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/hatan4ik/aws.modules.ecs-service/compare/v0.1.1...v0.1.2

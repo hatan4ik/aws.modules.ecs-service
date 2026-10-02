@@ -88,7 +88,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). The 
 feat(autoscaling): add predictive scaling policy type
 fix(iam): reduce secret ARNs with version stages to the base secret
 docs: describe the ignore_task_definition_changes variant
-test(security-group): cover ipv6 all-protocol egress
+test(container-definition): cover health check defaults
 feat!: require cluster_arn instead of cluster_name
 ```
 

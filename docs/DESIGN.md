@@ -34,9 +34,11 @@ module consumes their identifiers.
 
 - **Single responsibility.** Each submodule has one reason to change:
   `container-definition` (ECS container JSON schema), `iam` (role and policy
-  shape), `security-group` (rule shape), `autoscaling` (scaling policy shape).
-  The root module composes them and owns only the task definition, the
-  service, and the log group.
+  shape), `autoscaling` (scaling policy shape). The task security group and
+  its rule shape come from the external `aws.modules.security-group` module
+  (since v1.0.1; v1.0.0 shipped an internal `security-group` submodule). The
+  root module composes them and owns only the task definition, the service,
+  and the log group.
 - **Open/closed.** New behaviour is added by declaring data (a container, a
   rule, a statement, a policy, a scheduled action), not by editing the module.
   Names, paths, and boundaries are overridable inputs.
@@ -126,6 +128,26 @@ container definitions.
   conditions scoped to the cluster's account and region.
 - Log group encrypted with a caller KMS key when supplied; 365-day retention
   by default.
+
+### Known limitation: digest pinning and ECR lifecycle policies
+
+`require_image_digest = true` makes every task definition revision refer to
+an exact image, which is what makes rollbacks exact. That guarantee holds only
+while the digest still exists in ECR. A count-based lifecycle rule (for example
+"keep the last 30 images") expires the oldest digest on the next push even if a
+running revision pins it; ECS then cannot start replacement tasks for that
+revision and a rollback to it fails at image pull. The module does not own the
+repository, so it cannot prevent this; repository owners should size the expiry
+window above the rollback horizon or exempt deployed digests from expiry.
+
+### Service quotas
+
+Fargate task sizes, ephemeral storage (21-200 GiB), and IAM name lengths are
+validated at plan time. Two AWS quotas are not, because they depend on the
+account and cluster rather than on one service: services per cluster and tasks
+per service (both 5,000 by default and adjustable in Service Quotas). Size
+`desired_count` and `autoscaling.max_capacity` against the tasks-per-service
+quota.
 
 ## Testing strategy
 

@@ -260,6 +260,11 @@ resource "aws_ecs_service" "this" {
     }
 
     precondition {
+      condition     = try(var.deployment_configuration.strategy, null) != "BLUE_GREEN" || alltrue([for balancer in values(var.load_balancers) : balancer.advanced_configuration != null])
+      error_message = "A BLUE_GREEN deployment_configuration.strategy requires advanced_configuration on every load_balancers entry (alternate target group, production listener rule, and role)."
+    }
+
+    precondition {
       condition     = var.deployment_controller_type == "ECS" || !var.deployment_circuit_breaker.enable
       error_message = "The deployment circuit breaker is only supported by the ECS deployment controller; set deployment_circuit_breaker.enable = false for other controllers."
     }
@@ -528,6 +533,11 @@ resource "aws_ecs_service" "ignore_task_definition" {
     precondition {
       condition     = var.service_connect_configuration == null ? true : alltrue([for service in var.service_connect_configuration.services : contains(local.declared_port_names, service.port_name)])
       error_message = "Every service_connect_configuration.services[*].port_name must match a named port mapping on a declared container."
+    }
+
+    precondition {
+      condition     = try(var.deployment_configuration.strategy, null) != "BLUE_GREEN" || alltrue([for balancer in values(var.load_balancers) : balancer.advanced_configuration != null])
+      error_message = "A BLUE_GREEN deployment_configuration.strategy requires advanced_configuration on every load_balancers entry (alternate target group, production listener rule, and role)."
     }
 
     precondition {
