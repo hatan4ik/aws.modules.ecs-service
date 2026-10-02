@@ -98,6 +98,7 @@ Identity
 Images
 
 - `require_image_digest` is true by default. A precondition on the task definition rejects any container image that does not end in `@sha256:<64 hex>`, so rollbacks are exact and deployments reproducible. Set `require_image_digest = false` to opt out deliberately; `version_consistency` is available per container when you do.
+- A pinned digest is only as durable as the image behind it. Rollbacks are exact only while the digest still exists in its repository: an ECR lifecycle policy that expires images by count (for example "keep the last 30") deletes the oldest digest on the next push, even when a running task definition still references it. ECS can then no longer start replacement tasks for that revision (scale-out, AZ rebalancing, host retirement) and a rollback to it fails at image pull. Keep the expiry window comfortably larger than the number of revisions you may need to roll back to, or exclude deployed digests from expiry (for example by tagging them with a protected prefix the lifecycle rule does not match). This module does not manage ECR; the lifecycle policy belongs to whoever owns the repository.
 
 Logs
 
@@ -125,7 +126,7 @@ Two layers, deliberately separate:
 
 ## Design principles
 
-- Single responsibility. Each submodule has one reason to change: the container JSON schema, the IAM role and policy shape, the security-group rule shape, the scaling policy shape. The root owns only the task definition, the service, and the log group.
+- Single responsibility. Each submodule has one reason to change: the container JSON schema, the IAM role and policy shape, the scaling policy shape. The security-group rule shape is owned by the external [`aws.modules.security-group`](https://github.com/hatan4ik/aws.modules.security-group) module, which the root composes like a submodule. The root owns only the task definition, the service, and the log group.
 - Open/closed. New behaviour is added by declaring data (a container, a rule, a statement, a policy, a scheduled action), not by editing the module. Names, paths, descriptions, and boundaries are inputs.
 - Liskov substitution. A caller-supplied role, security group, or log group is a drop-in for a managed one. Outputs and downstream wiring are identical; only the `create_*` flag and its ARN, ID, or name input change.
 - Interface segregation. Feature groups are optional objects that default to `null` or `{}`. Required inputs are `name`, `cluster_arn`, `subnet_ids`, and one container; with the default managed security group you also pass `vpc_id`.
@@ -137,6 +138,7 @@ The full rationale, including why the v0.1.x design was replaced, is in [docs/DE
 
 - Terraform `>= 1.7.0, < 2.0.0`. AWS provider `>= 6.35.0, < 7.0.0`.
 - Fargate only. The service uses `launch_type = "FARGATE"`, or a `capacity_provider_strategy` of `FARGATE` and `FARGATE_SPOT` entries, which replaces `launch_type`. Linux and Windows Server operating system families, x86_64 and ARM64.
+- AWS service quotas this module does not enforce, because they are per account or per cluster rather than per service: **services per cluster** (default 5,000) and **tasks per service** (default 5,000, the ceiling for `desired_count` and `autoscaling.max_capacity`). Both are adjustable in Service Quotas; check the current values for your account and Region before sizing a large fleet or an aggressive autoscaling maximum. Fargate CPU/memory combinations, ephemeral storage (21-200 GiB), and derived IAM name lengths are validated at plan time.
 - Roadmap: EC2 launch type, managed EBS volumes, and App Mesh proxy configuration. They will arrive as optional inputs and will not break the v1 interface.
 
 ## Versioning and releases
