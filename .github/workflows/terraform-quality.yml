@@ -29,7 +29,23 @@ jobs:
           - examples/load-balanced
           - examples/multiple-services
           - examples/bring-your-own
-    uses: hatan4ik/terraform-pipelines/.github/workflows/terraform-quality.yml@838da070a7e33ed2911ad3768ba3d00cccc9a5d9 # v0.1.0
+    uses: hatan4ik/terraform-pipelines/.github/workflows/terraform-quality.yml@8fc2a04c7931dd449097bb92b15b085278e3f67a # v0.1.1
     with:
       working_directory: ${{ matrix.directory }}
       check_docs: true
+
+  # service.tf declares aws_ecs_service.this and .ignore_task_definition with
+  # identical bodies because ignore_changes cannot be conditional. This job
+  # fails the PR when the two bodies drift apart (same check as `make variants`).
+  service-variants:
+    name: service variants in sync
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Compare the two aws_ecs_service bodies
+        run: scripts/check-service-variants.sh service.tf
